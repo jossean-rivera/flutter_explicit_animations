@@ -51,8 +51,11 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 
   //  Method to start the animation, increasing the logo size smoothly to max size.
   void _animateLogoSize() {
-    //  Start the animation from its initial value (0.0) to its final value (1.0).
-    controller.forward();
+    if (controller.isAnimating) {
+      controller.stop();
+    } else {
+      controller.forward();
+    }
   }
 
   @override
@@ -62,25 +65,19 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
     controller =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
 
-    //  Set a loop animation that increases and decreases the logo from 
-    //  _minSize to _maxSize
+    //  Set a curve of the animation
+    animation = CurvedAnimation(parent: controller, curve: Curves.easeInCirc);
     animation =
         Tween<double>(begin: _minSize, end: _maxSize).animate(controller)
           ..addStatusListener((status) {
-
-            // The addStatusListener checks the current status of the animation.
+            // Use addStatusListener to loop the animation.
             switch (status) {
-
-              // If the animation has completed, reverse it back to the start.
               case AnimationStatus.completed:
                 controller.reverse();
                 break;
-
-              // If the animation has been dismissed (reached the start), start it again forward.
               case AnimationStatus.dismissed:
                 controller.forward();
                 break;
-
               // Do nothing for other statuses (forwarding or reversing).
               default:
             }
@@ -121,7 +118,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: ElevatedButton(
                     onPressed: _animateLogoSize,
-                    child: const Text('Animate'),
+                    child: Text('Animate'),
                   ),
                 ),
               ],

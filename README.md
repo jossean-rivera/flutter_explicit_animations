@@ -303,6 +303,8 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 
 ```
 
+### Get animation status notifications 
+
 You can use `addStatusListener` to call a listener every time the status of an animation changes. For example, you can use a status listener that will play the animation backwards once it reaches the end, and play the animation again forwards once it reaches the start. This will result in having a loop animation that keeps changing the size of the logo from the `_minSize` value to `_maxSize`. 
 
 ```dart
@@ -348,4 +350,57 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   // ...
 }
 
+```
+
+### Set an animation curve
+The progression from the start and end range of the animation is linearly by default, but it can be changed by setting a curved animation.
+
+```dart
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
+
+  // ...
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+
+    //  Set a curve of the animation
+    animation = CurvedAnimation(parent: controller, curve: Curves.easeInCirc);
+    animation =
+        Tween<double>(begin: _minSize, end: _maxSize).animate(controller)
+          ..addStatusListener((status) {
+            // Use addStatusListener to loop the animation.
+            switch (status) {
+              case AnimationStatus.completed:
+                controller.reverse();
+                break;
+              case AnimationStatus.dismissed:
+                controller.forward();
+                break;
+              // Do nothing for other statuses (forwarding or reversing).
+              default:
+            }
+          });
+  }
+
+  // ...
+}
+```
+
+Built-in curve paremeters options:
+
+![curve image](/images/curves.png)
+
+However, you can define your own curve. 
+
+```dart
+import 'dart:math';
+
+class ShakeCurve extends Curve {
+  @override
+  double transform(double t) => sin(t * pi * 2);
+}
 ```
