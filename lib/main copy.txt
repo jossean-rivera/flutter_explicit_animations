@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const LogoApp());
+}
+
+class LogoApp extends StatefulWidget {
+  const LogoApp({super.key});
+
+  @override
+  State<LogoApp> createState() => _LogoAppState();
+}
+
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController controller;
+
+  double _logoSize = 100;
+  final double _maxSize = 300;
+  final double _minSize = 10;
+  final double _step = 50; // Incremental step size
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    animation =
+        Tween<double>(begin: _minSize, end: _maxSize).animate(controller);
+
+    animation.addListener(() => setState(() {
+          _logoSize = animation.value;
+        }));
+  }
+
+  void _increaseLogoSize() {
+    setState(() {
+      _logoSize = (_logoSize + _step).clamp(_minSize, _maxSize);
+    });
+  }
+
+  void _decreaseLogoSize() {
+    setState(() {
+      _logoSize = (_logoSize - _step).clamp(_minSize, _maxSize);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Flutter Logo Resizer')),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: ElevatedButton(
+                onPressed: _increaseLogoSize,
+                child: const Text('Increase Size'),
+              ),
+            ),
+            Center(
+              child: SizedBox(
+                height: _logoSize,
+                width: _logoSize,
+                child: const FlutterLogo(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: ElevatedButton(
+                onPressed: _decreaseLogoSize,
+                child: const Text('Decrease Size'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
