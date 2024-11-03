@@ -302,3 +302,50 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 }
 
 ```
+
+You can use `addStatusListener` to call a listener every time the status of an animation changes. For example, you can use a status listener that will play the animation backwards once it reaches the end, and play the animation again forwards once it reaches the start. This will result in having a loop animation that keeps changing the size of the logo from the `_minSize` value to `_maxSize`. 
+
+```dart
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
+  final double _maxSize = 300;
+  final double _minSize = 50;
+
+  late AnimationController controller;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+
+    //  Set a loop animation that increases and decreases the logo from 
+    //  _minSize to _maxSize
+    animation =
+        Tween<double>(begin: _minSize, end: _maxSize).animate(controller)
+          ..addStatusListener((status) {
+
+            // The addStatusListener checks the current status of the animation.
+            switch (status) {
+
+              // If the animation has completed, reverse it back to the start.
+              case AnimationStatus.completed:
+                controller.reverse();
+                break;
+
+              // If the animation has been dismissed (reached the start), start it again forward.
+              case AnimationStatus.dismissed:
+                controller.forward();
+                break;
+
+              // Do nothing for other statuses (forwarding or reversing).
+              default:
+            }
+          });
+  }
+
+  // ...
+}
+
+```

@@ -59,16 +59,32 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    //  Initialize the animation controller with a duration of 2 seconds.
-    //  This controller will animate from the default ranage of 0.0 to 1.0 over 2 seconds.
     controller =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
 
-    // Use a Tween to define the animation range from _minSize to _maxSize.
-    // This allows the animation to produce values directly between 50 and 300,
-    // mapping the controller's progress (0.0 to 1.0) to a range from _minSize to _maxSize.
+    //  Set a loop animation that increases and decreases the logo from 
+    //  _minSize to _maxSize
     animation =
-        Tween<double>(begin: _minSize, end: _maxSize).animate(controller);
+        Tween<double>(begin: _minSize, end: _maxSize).animate(controller)
+          ..addStatusListener((status) {
+
+            // The addStatusListener checks the current status of the animation.
+            switch (status) {
+
+              // If the animation has completed, reverse it back to the start.
+              case AnimationStatus.completed:
+                controller.reverse();
+                break;
+
+              // If the animation has been dismissed (reached the start), start it again forward.
+              case AnimationStatus.dismissed:
+                controller.forward();
+                break;
+
+              // Do nothing for other statuses (forwarding or reversing).
+              default:
+            }
+          });
   }
 
   @override
