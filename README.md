@@ -20,11 +20,81 @@ Common fields and methods from the AnimationController are:
 
 See more: [AnimationController class referece | Flutter.dev](https://api.flutter.dev/flutter/animation/AnimationController-class.html)
 
+### Tween
+
+Typically, a AnimationController goes from 0.0 to 1.0. However, you can use a `Tween` object to interpolate between other value ranges. Like, having an animation going from -100 to +100, or a color changing from one RGB value to another RGB value. 
+
+Example:
+
+```dart 
+//  Interpolate an animation value from -100 to +100, instead of 0 to 1.
+var controller = AnimationController(vsync: this);
+var animation = Tween<double>(begin: -100, end: 100).animate(controller);
+
+// Define a ColorTween that transitions from blue to red.
+var colorAnimation = ColorTween(
+  begin: Colors.blue,
+  end: Colors.red,
+).animate(controller);
+```
+
+See more: [Tween class reference | Flutter.dev](https://api.flutter.dev/flutter/animation/Tween-class.html)
+
 ### TickerProvider
 
 The controller requires a TickerProvider, which is usually the widget itself, in order to generate ticks at regular interval values, allowing the controller to update its internal value. If you're using the widget itself as a TikerProvider, then inheriht from either `SingleTickerProviderStateMixin` or `TickerProviderStateMixin`.
 
+Example:
+
+```dart
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    //  Pass a reference to this widget instance that implements SingleTickerProviderStateMixin
+    controller = AnimationController(vsync: this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+```
+
 See more: [TickerProvider class reference | Flutter.dev](https://api.flutter.dev/flutter/scheduler/TickerProvider-class.html)
+
+### Listeners
+
+You can register listeners on the animation objects so that they get notified the animation value has changed on every frame or the status of the animation. This is likely where you will add a listener that updates the state of a stateful widget, to update the UI with a new value for a dynamic property.
+
+Example:
+
+```dart
+@override
+void initState() {
+  super.initState();
+
+  // Initialize the animation controller with a 2-second duration.
+  controller = AnimationController(
+    duration: const Duration(seconds: 2),
+    vsync: this,
+  );
+
+  // Define a tween to animate the value from 0.0 to 1.0.
+  animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller)
+    // Add a listener that prints the current animation value.
+    ..addListener(() {
+      print("Current animation value: ${_animation.value}");
+    });
+
+  // Start the animation.
+  _controller.forward();
+}
+```
 
 ## Tutorial
 
