@@ -1,10 +1,45 @@
 # Explicit Animations
 
-A new Flutter project.
+In Flutter, an **explicit animation** is a UI animation in which you have control over the execution of the animation, as opposed to implicit animations, where you typically assign changing values that automatically animate over time.
 
-## Basic Application
+Key items of explicit animations are:
 
-Display a Flutter Logo image with increase and decrease buttons that will change the size of the logo and an animate button that will be implemented later. 
+### AnimationController
+
+Manager of the animation, it progresses an internal value from 0.0 to 1.0 (or vise versa) over a given period of time. The controller allows you to start, stop, reverse, and repeat the animation as needed. Once the animation is triggered, you can use the controller value to dynamically change the property values of widgets, such as width, height, and opacity. 
+
+You can register functions as "listeners" that will be invoked when the internal value of the controller changes. You'll likely register a function that updates the state of the widget, causing it to refresh on the UI. 
+
+Common fields and methods from the AnimationController are:
+
+- `value`: Internal value of the animation.
+- `forward()`: Start the animation and progresses the invernal value from 0.0 to 1.0.
+- `reverse()`: Reverses the animation and moves the internal value from 1.0 to 0.0.
+- `stop()`: Stops the animations at the current internal value.
+- `addListener()`: Registers a function that will be invoked when the controller value changes.
+
+See more: [AnimationController class referece | Flutter.dev](https://api.flutter.dev/flutter/animation/AnimationController-class.html)
+
+### TickerProvider
+
+The controller requires a TickerProvider, which is usually the widget itself, in order to generate ticks at regular interval values, allowing the controller to update its internal value. If you're using the widget itself as a TikerProvider, then inheriht from either `SingleTickerProviderStateMixin` or `TickerProviderStateMixin`.
+
+See more: [TickerProvider class reference | Flutter.dev](https://api.flutter.dev/flutter/scheduler/TickerProvider-class.html)
+
+## Tutorial
+
+### Setup basic application
+
+For demostration purposes, we'll use a basic application that displays the Flutter logo and the logo will be resized with an animation. 
+
+First, Create a new Flutter application.
+
+```
+flutter create animations_testing
+cd animiations_testing
+```
+
+Update the `main.dart` file to include the basic application. The app will display a Flutter Logo image with increase and decrease buttons that will change the size of the logo and an animate button that will be implemented later. 
 
 ```dart
 import 'package:flutter/material.dart';
@@ -105,7 +140,9 @@ class _LogoAppState extends State<LogoApp> {
 }
 ```
 
-To start implement an animation that will increase the size of the logo smoothly, then use an AnimationController that by default will animate from 0.0 to 1.0 and update the size of the logo every time the animation listener gets called. 
+### Use AnimationController
+
+To start implementing an animation that will increase the size of the logo smoothly, then use an `AnimationController` that by default will animate from 0.0 to 1.0 and update the size of the logo every time the animation listener gets called. 
 
 ```dart
 class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
@@ -149,6 +186,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 }
 ```
 
+### Use Tweens
 Animate from the range of 0 to 300 directly, instead of having to transform every value from 0.0 to 1.0.
 
 ```dart
@@ -202,7 +240,9 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 }
 ```
 
-Simplify code with the AnimatedWidget helper, that will rebuild everytime the animation calls its listeners. 
+### Use AnimatedWidget
+
+Simplify code with the `AnimatedWidget` helper, that will rebuild everytime the animation calls its listeners. So there's no need to keep resetting the state of the widget every time the listener gets called. 
 
 ```dart
 //  Use the AnimatedWidget helper class that will
@@ -353,7 +393,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 ```
 
 ### Set an animation curve
-The progression from the start and end range of the animation is linearly by default, but it can be changed by setting a curved animation.
+The progression from start to end of an animation is linear by default, but it can be changed by using a curved animation.  
 
 ```dart
 class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
