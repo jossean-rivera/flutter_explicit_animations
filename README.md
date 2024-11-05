@@ -514,3 +514,67 @@ class ShakeCurve extends Curve {
   double transform(double t) => sin(t * pi * 2);
 }
 ```
+
+### Simultaneous animations
+
+Update the logo widget to animate two properties at the same time: size and opacity. You can use multiple Tween objects with the same AnimationController to interpolate the animation value into other values that you can assign to different properties in the widget.
+
+```dart
+class AnimatedLogo extends AnimatedWidget {
+  const AnimatedLogo({super.key, required Animation<double> animation})
+      : super(listenable: animation);
+
+  static const double _maxSize = 300;
+  static const double _minSize = 50;
+
+  // Make the Tweens static because they don't change.
+  static final _opacityTween = Tween<double>(begin: 0.1, end: 1);
+  static final _sizeTween = Tween<double>(begin: _minSize, end: _maxSize);
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
+    return Opacity(
+      //  Use the tween to change the animation value, to an opacity value
+      opacity: _opacityTween.evaluate(animation),
+      child: Center(
+        child: SizedBox(
+          //  Use the tween to change the animation value, to a size value
+          height: _sizeTween.evaluate(animation),
+          width: _sizeTween.evaluate(animation),
+          child: const FlutterLogo(),
+        ),
+      ),
+    );
+  }
+}
+
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
+
+  late AnimationController controller;
+
+  // ...
+
+  //  Method to start the animation, increasing the logo size smoothly to max size.
+  void _animateLogoSize() {
+    controller.forward();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    //  Have one controller to move both animations
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+  }
+
+  // ...
+}
+```
+
+# References / Futher Readings
+
+- [Explicit Animations | Flutter.dev](https://docs.flutter.dev/ui/animations/tutorial)
+- [Flutter Animations: Exploring Explicit Animations in Flutter by Ashutosh Rawat | Blup.in](https://www.blup.in/blog/flutter-animations-exploring-explicit-animations-in-flutter)
+- [AnimatedBuilder class (useful for more complex widgets) | Flutter.dev](https://api.flutter.dev/flutter/widgets/AnimatedBuilder-class.html#:~:text=To%20use%20AnimatedBuilder%2C%20construct%20the,additional%20state%2C%20consider%20using%20AnimatedWidget.&text=If%20playback%20doesn't%20begin%20shortly%2C%20try%20restarting%20your%20device.)
