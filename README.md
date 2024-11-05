@@ -98,7 +98,7 @@ void initState() {
 
 ## Tutorial
 
-### Setup basic application
+### 1. Setup basic application
 
 For demostration purposes, we'll use a basic application that displays the Flutter logo and the logo will be resized with an animation. 
 
@@ -210,7 +210,7 @@ class _LogoAppState extends State<LogoApp> {
 }
 ```
 
-### Use AnimationController
+### 2. Use AnimationController
 
 To start implementing an animation that will increase the size of the logo smoothly, then use an `AnimationController` that by default will animate from 0.0 to 1.0 and update the size of the logo every time the animation listener gets called. 
 
@@ -256,7 +256,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 }
 ```
 
-### Use Tweens
+### 3. Use Tweens
 Animate from the range of 0 to 300 directly, instead of having to transform every value from 0.0 to 1.0.
 
 ```dart
@@ -310,7 +310,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 }
 ```
 
-### Use AnimatedWidget
+### 4. Use AnimatedWidget
 
 Simplify code with the `AnimatedWidget` helper, that will rebuild everytime the animation calls its listeners. So there's no need to keep resetting the state of the widget every time the listener gets called. 
 
@@ -413,7 +413,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 
 ```
 
-### Get animation status notifications 
+### 5. Get animation status notifications 
 
 You can use `addStatusListener` to call a listener every time the status of an animation changes. For example, you can use a status listener that will play the animation backwards once it reaches the end, and play the animation again forwards once it reaches the start. This will result in having a loop animation that keeps changing the size of the logo from the `_minSize` value to `_maxSize`. 
 
@@ -462,7 +462,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 
 ```
 
-### Set an animation curve
+### 6. Set an animation curve
 The progression from start to end of an animation is linear by default, but it can be changed by using a curved animation.  
 
 ```dart
@@ -515,7 +515,7 @@ class ShakeCurve extends Curve {
 }
 ```
 
-### Simultaneous animations
+### 7. Simultaneous animations
 
 Update the logo widget to animate two properties at the same time: size and opacity. You can use multiple Tween objects with the same AnimationController to interpolate the animation value into other values that you can assign to different properties in the widget.
 
