@@ -11,65 +11,36 @@ class LogoApp extends StatefulWidget {
   State<LogoApp> createState() => _LogoAppState();
 }
 
-//  Use the AnimatedWidget helper class that will
-//  rebuild everytime the animation calls the listener
-//  No need to set the state of the widget directly.
-class AnimatedLogo extends AnimatedWidget {
-  const AnimatedLogo({super.key, required Animation<double> animation})
-      : super(listenable: animation);
+class _LogoAppState extends State<LogoApp> {
 
-  static const double _maxSize = 300;
-  static const double _minSize = 50;
+  //  Initialize size of the logo.
+  double _logoSize = 100;
 
-  // Make the Tweens static because they don't change.
-  static final _opacityTween = Tween<double>(begin: 0.1, end: 1);
-  static final _sizeTween = Tween<double>(begin: _minSize, end: _maxSize);
+  //  Maximum and minimum size limits for the logo.
+  final double _maxSize = 300;
+  final double _minSize = 50;
 
-  @override
-  Widget build(BuildContext context) {
-    final animation = listenable as Animation<double>;
-    return Opacity(
-      //  Use the tween to change the animation value, to an opacity value
-      opacity: _opacityTween.evaluate(animation),
-      child: Center(
-        child: SizedBox(
-          //  Use the tween to change the animation value, to a size value
-          height: _sizeTween.evaluate(animation),
-          width: _sizeTween.evaluate(animation),
-          child: const FlutterLogo(),
-        ),
-      ),
-    );
-  }
-}
+  // Incremental value for the logo size.
+  final double _step = 50;
 
-class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
-  final double _animationStep = 0.1;
-
-  late AnimationController controller;
-
+  // Update the state of the widget to resize with the updated size.
   void _increaseLogoSize() {
-    //  Move the controller value forwards
-    controller.value = (controller.value + _animationStep).clamp(0.0, 1.0);
+    setState(() {
+      _logoSize = (_logoSize + _step).clamp(_minSize, _maxSize);
+    });
   }
 
+  // Update the state of the widget to resize with the updated size.
   void _decreaseLogoSize() {
-    //  Move the controller value backwards
-    controller.value = (controller.value - _animationStep).clamp(0.0, 1.0);
+    setState(() {
+      //  Reduce size by step, and make sure it's always between the size limits
+      _logoSize = (_logoSize - _step).clamp(_minSize, _maxSize);
+    });
   }
 
-  //  Method to start the animation, increasing the logo size smoothly to max size.
+  // Placeholder for the animate function, to be implemented with explicit animations.
   void _animateLogoSize() {
-    controller.forward();
-  }
 
-  @override
-  void initState() {
-    super.initState();
-
-    //  Have one controller to move both animations
-    controller =
-        AnimationController(duration: const Duration(seconds: 2), vsync: this);
   }
 
   @override
@@ -80,6 +51,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Button at the top to increase the logo size.
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: ElevatedButton(
@@ -87,10 +59,18 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
                 child: const Text('Increase Size'),
               ),
             ),
-            // Flutter logo that will rebuild every time the animation is updated.
-            AnimatedLogo(animation: controller),
+            // Flutter logo at the center of the page with a dynamic sizing based on _logoSize.
+            Center(
+              child: SizedBox(
+                height: _logoSize,
+                width: _logoSize,
+                child: const FlutterLogo(),
+              ),
+            ),
+            // Bottom buttons to decrease the logo size and trigger animation.
             Column(
               children: [
+                // Button to decrease the logo size.
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: ElevatedButton(
@@ -98,6 +78,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
                     child: const Text('Decrease Size'),
                   ),
                 ),
+                // Button for animation, functionality to be added later.
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: ElevatedButton(
