@@ -11,8 +11,7 @@ class LogoApp extends StatefulWidget {
   State<LogoApp> createState() => _LogoAppState();
 }
 
-class _LogoAppState extends State<LogoApp> {
-
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   //  Initialize size of the logo.
   double _logoSize = 100;
 
@@ -22,6 +21,9 @@ class _LogoAppState extends State<LogoApp> {
 
   // Incremental value for the logo size.
   final double _step = 50;
+
+  //  The controller of an animation
+  late AnimationController controller;
 
   // Update the state of the widget to resize with the updated size.
   void _increaseLogoSize() {
@@ -38,9 +40,28 @@ class _LogoAppState extends State<LogoApp> {
     });
   }
 
-  // Placeholder for the animate function, to be implemented with explicit animations.
+  //  Method to start the animation, increasing the logo size smoothly to max size.
   void _animateLogoSize() {
+    //  Start the animation from its initial value (0.0) to its final value (1.0).
+    controller.forward();
+  }
 
+  @override
+  void initState() {
+    super.initState();
+
+    //  Initialize the animation controller with a duration of 2 seconds.
+    //  This controller will animate from the default ranage of 0.0 to 1.0 over 2 seconds.
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+
+    //  Add a listener to the controller that updates _logoSize based on
+    //  the controller's current value, which changes from 0.0 to 1.0.
+    //  As the controller's value goes from 0.0 to 1.0, _logoSize will go from 0 to _maxSize.
+    controller.addListener(() {
+      //  Update the state of the widget to refresh the UI
+      setState(() => _logoSize = controller.value * _maxSize);
+    });
   }
 
   @override
