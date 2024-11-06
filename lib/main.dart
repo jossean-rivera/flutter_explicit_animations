@@ -25,6 +25,9 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   //  The controller of an animation
   late AnimationController controller;
 
+  //  Get status of the animation with the translated value.
+  late Animation<double> animation;
+
   // Update the state of the widget to resize with the updated size.
   void _increaseLogoSize() {
     setState(() {
@@ -55,12 +58,17 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
     controller =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
 
-    //  Add a listener to the controller that updates _logoSize based on
-    //  the controller's current value, which changes from 0.0 to 1.0.
-    //  As the controller's value goes from 0.0 to 1.0, _logoSize will go from 0 to _maxSize.
-    controller.addListener(() {
-      //  Update the state of the widget to refresh the UI
-      setState(() => _logoSize = controller.value * _maxSize);
+    // Use a Tween to define the animation range from _minSize to _maxSize.
+    // This allows the animation to produce values directly between 50 and 300,
+    // mapping the controller's progress (0.0 to 1.0) to a range from _minSize to _maxSize.
+    animation =
+        Tween<double>(begin: _minSize, end: _maxSize).animate(controller);
+
+    // Add a listener to the animation that updates _logoSize as the animation progresses.
+    // Each time the animation's value changes, it will set _logoSize to that value,
+    // smoothly transitioning from _minSize to _maxSize.
+    animation.addListener(() {
+      setState(() => _logoSize = animation.value);
     });
   }
 
